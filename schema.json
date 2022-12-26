@@ -1,0 +1,81 @@
+{
+  "type": "component",
+  "metadata": {},
+  "schema": {
+    "name": "bb-component-SuperGauge",
+    "friendlyName": "bb-component-SuperGauge",
+    "description": "A Gauge component for Budibase",
+    "icon": "Text",
+    "settings": [
+      {
+        "type": "select",
+        "key": "gaugeType",
+        "label": "Gauge Type",
+        "options": [
+          { "label": "Speedometer", "value": "speedometer" },
+          { "label": "TrackFill", "value": "trackFill" }
+        ]
+      },
+      {
+        "type": "select",
+        "key": "arcSize",
+        "label": "Arc Size",
+        "options": [
+          { "label": "90 Degress", "value": "90" },
+          { "label": "120 Degress", "value": "120" },
+          { "label": "180 Degress", "value": "180" },
+          { "label": "240 Degress", "value": "240" }
+        ],
+        "defaultValue": "240"
+      },
+      {
+        "type": "boolean",
+        "key": "showNeedle",
+        "label": "Show Needle",
+        "defaultValue": false
+      },
+      {
+        "type": "boolean",
+        "key": "showValue",
+        "label": "Show Value",
+        "defaultValue": false
+      },
+      {
+        "type": "color",
+        "key": "fillColor",
+        "label": "Fill Color",
+        "defaultValue": "lime"
+      },
+      {
+        "type": "number",
+        "key": "min",
+        "label": "Minimum",
+        "defaultValue": 0
+      },
+      {
+        "type": "number",
+        "key": "max",
+        "label": "Maximum",
+        "defaultValue": 1000
+      },
+      {
+        "type": "number",
+        "key": "value",
+        "label": "Value",
+        "defaultValue": 300
+      },
+      {
+        "type": "number",
+        "key": "majorTicks",
+        "label": "Major Ticks",
+        "defaultValue": 10
+      },
+      {
+        "type": "number",
+        "key": "minorTicks",
+        "label": "Minor Ticks",
+        "defaultValue": 100
+      }
+    ]
+  }
+}
