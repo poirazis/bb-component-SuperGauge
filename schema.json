@@ -14,7 +14,8 @@
         "options": [
           { "label": "Speedometer", "value": "speedometer" },
           { "label": "TrackFill", "value": "trackFill" }
-        ]
+        ],
+        "defaultValue": "trackFill"
       },
       {
         "type": "select",
@@ -24,27 +25,11 @@
           { "label": "90 Degress", "value": "90" },
           { "label": "120 Degress", "value": "120" },
           { "label": "180 Degress", "value": "180" },
-          { "label": "240 Degress", "value": "240" }
+          { "label": "240 Degress", "value": "240" },
+          { "label": "270 Degress", "value": "270" },
+          { "label": "360 Degress", "value": "360" }
         ],
         "defaultValue": "240"
-      },
-      {
-        "type": "boolean",
-        "key": "showNeedle",
-        "label": "Show Needle",
-        "defaultValue": false
-      },
-      {
-        "type": "boolean",
-        "key": "showValue",
-        "label": "Show Value",
-        "defaultValue": false
-      },
-      {
-        "type": "color",
-        "key": "fillColor",
-        "label": "Fill Color",
-        "defaultValue": "lime"
       },
       {
         "type": "number",
@@ -65,16 +50,85 @@
         "defaultValue": 300
       },
       {
-        "type": "number",
-        "key": "majorTicks",
-        "label": "Major Ticks",
-        "defaultValue": 10
+        "type": "boolean",
+        "key": "showNeedle",
+        "label": "Show Needle",
+        "defaultValue": false
       },
       {
-        "type": "number",
-        "key": "minorTicks",
-        "label": "Minor Ticks",
-        "defaultValue": 100
+        "type": "boolean",
+        "key": "showValue",
+        "label": "Show Value",
+        "defaultValue": false
+      },
+      {
+        "type": "boolean",
+        "key": "showCenter",
+        "label": "Show Center",
+        "defaultValue": false
+      },
+      {
+        "type": "boolean",
+        "key": "showTicks",
+        "label": "Show Ticks",
+        "defaultValue": false
+      },
+      {
+        "section": true,
+        "name": "Track Settings",
+        "dependsOn": { "setting": "gaugeType", "value": "trackFill" },
+        "settings": [ 
+          {
+            "type": "select",
+            "key": "trackSize",
+            "label": "Track Size",
+            "options": [
+              { "label": "Tiny", "value": "tiny" },
+              { "label": "Small", "value": "small" },
+              { "label": "Medium", "value": "medium" },
+              { "label": "Large", "value": "large" }
+            ],
+            "defaultValue": "medium"
+          },
+
+          {
+            "type": "color",
+            "key": "fillColor",
+            "label": "Fill Color",
+            "defaultValue": "lime"
+          },
+          {
+            "type": "color",
+            "key": "endColor",
+            "label": "Gradient Color",
+            "defaultValue": "yellow"
+          }
+        ]
+      }, 
+      {
+        "section": true,
+        "name": "Tick Settings",
+        "dependsOn": "showTicks",
+        "settings": [
+          {
+            "type": "boolean",
+            "key": "showTickLabels",
+            "label": "Show Tick Labels",
+            "defaultValue": false
+          },
+          {
+            "type": "number",
+            "key": "majorTicks",
+            "label": "Major Ticks",
+            "defaultValue": 10
+          },
+          {
+            "type": "number",
+            "key": "minorTicks",
+            "label": "Minor Ticks",
+            "defaultValue": 5
+          }
+        ]
       }
     ]
   }
