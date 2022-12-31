@@ -3,19 +3,16 @@
   "metadata": {},
   "schema": {
     "name": "bb-component-SuperGauge",
-    "friendlyName": "bb-component-SuperGauge",
+    "friendlyName": "Super Gauge",
     "description": "A Gauge component for Budibase",
-    "icon": "Text",
+    "icon": "GraphDonut",
+    "styles": ["size", "border", "padding"],
     "settings": [
       {
-        "type": "select",
-        "key": "gaugeType",
-        "label": "Gauge Type",
-        "options": [
-          { "label": "Speedometer", "value": "speedometer" },
-          { "label": "TrackFill", "value": "trackFill" }
-        ],
-        "defaultValue": "trackFill"
+        "type": "text",
+        "key": "title",
+        "label": "Title",
+        "defaultValue": "New Super TrackFill Gauge"
       },
       {
         "type": "select",
@@ -32,6 +29,19 @@
         "defaultValue": "240"
       },
       {
+        "type": "select",
+        "key": "gaugeMinSize",
+        "label": "Gauge Minimum Size",
+        "options": [
+          { "label": "Tiny", "value": "32px" },
+          { "label": "Extra Small", "value": "64px" },
+          { "label": "Small", "value": "128px" },
+          { "label": "Medium", "value": "256px" },
+          { "label": "Large", "value": "384px" }
+        ],
+        "defaultValue": "256px"
+      },
+      {
         "type": "number",
         "key": "min",
         "label": "Minimum",
@@ -44,28 +54,16 @@
         "defaultValue": 1000
       },
       {
-        "type": "number",
+        "type": "text",
         "key": "value",
         "label": "Value",
-        "defaultValue": 300
-      },
-      {
-        "type": "boolean",
-        "key": "showNeedle",
-        "label": "Show Needle",
-        "defaultValue": false
+        "defaultValue": 800
       },
       {
         "type": "boolean",
         "key": "showValue",
         "label": "Show Value",
-        "defaultValue": false
-      },
-      {
-        "type": "boolean",
-        "key": "showCenter",
-        "label": "Show Center",
-        "defaultValue": false
+        "defaultValue": true
       },
       {
         "type": "boolean",
@@ -74,10 +72,34 @@
         "defaultValue": false
       },
       {
+        "type": "boolean",
+        "key": "showAdvanced",
+        "label": "Show Advanced Settigns",
+        "defaultValue": false
+      },
+      {
         "section": true,
-        "name": "Track Settings",
-        "dependsOn": { "setting": "gaugeType", "value": "trackFill" },
+        "name": "Advanced Settings",
+        "dependsOn": "showAdvanced",
         "settings": [ 
+          {
+            "type": "select",
+            "key": "valueSize",
+            "label": "Value Label Size",
+            "options": [
+              { "label": "Small", "value": "S" },
+              { "label": "Medium", "value": "M" },
+              { "label": "Large", "value": "L" },
+              { "label": "Extra Large", "value": "XL" },
+              { "label": "2X Large", "value": "XXL" }
+            ],
+            "defaultValue": "M"
+          },
+          {
+            "type": "color",
+            "key": "valueColor",
+            "label": "Value Label Color"
+          },
           {
             "type": "select",
             "key": "trackSize",
@@ -86,25 +108,39 @@
               { "label": "Tiny", "value": "tiny" },
               { "label": "Small", "value": "small" },
               { "label": "Medium", "value": "medium" },
-              { "label": "Large", "value": "large" }
+              { "label": "Large", "value": "large" },
+              { "label": "Huge", "value": "huge" }
             ],
             "defaultValue": "medium"
           },
-
           {
             "type": "color",
-            "key": "fillColor",
-            "label": "Fill Color",
-            "defaultValue": "lime"
+            "key": "trackColor",
+            "label": "Track Border Color"
           },
           {
             "type": "color",
-            "key": "endColor",
-            "label": "Gradient Color",
-            "defaultValue": "yellow"
+            "key": "trackFillColor",
+            "label": "Track Fill Color"
+          },
+          {
+            "type": "color",
+            "key": "trackGradientColor",
+            "label": "Track Fill Gradient Color"
+          },
+          {
+            "type": "select",
+            "key": "animationType",
+            "label": "Animation",
+            "options": [
+              { "label" : "None", "value": "none" }, 
+              { "label" : "Spring", "value": "spring" }, 
+              { "label" : "Tweened", "value": "tweened" } 
+            ],
+            "defaultValue": "tweened"
           }
         ]
-      }, 
+      },
       {
         "section": true,
         "name": "Tick Settings",
@@ -117,17 +153,18 @@
             "defaultValue": false
           },
           {
-            "type": "number",
-            "key": "majorTicks",
-            "label": "Major Ticks",
-            "defaultValue": 10
+            "type": "color",
+            "key": "tickLabelColor",
+            "label": "Tick Label Color"
           },
           {
             "type": "number",
-            "key": "minorTicks",
-            "label": "Minor Ticks",
-            "defaultValue": 5
+            "key": "majorTicks",
+            "label": "Major Ticks",
+            "defaultValue": 10,
+            "min": 1
           }
+        
         ]
       }
     ]

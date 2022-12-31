@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@crownframework/svelte-error-boundary": "^1.0.3",
+    "d3-scale": "^4.0.2",
+    "d3-shape": "^3.2.0",
     "svelte": "^3.49.0",
     "svelte-speedometer": "^1.1.0"
   },

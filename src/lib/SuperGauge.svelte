@@ -4,24 +4,30 @@
 	import { arc as d3arc } from 'd3-shape';
 	import { scaleLinear } from 'd3-scale';
     import { onMount } from 'svelte';
+    import { writable } from 'svelte/store';
 
-	export let gaugeType = 120
+	export let arcSize = 120
+	export let gaugeMinSize
+	export let title 
 	export let trackSize
-	export let showCenter = false
 
 	export let min = 0
 	export let max = 1000
 	export let value = 350
 
-	export let showNeedle = false
 	export let showValue = true
-	export let fillColor
-	export let endColor
+
+	export let trackColor
+	export let trackFillColor
+	export let trackGradientColor = undefined
+	export let tickLabelColor
+	export let valueColor
+	export let valueSize
+	export let animationType = "spring"
 
 	export let showTicks = false
   	export let showTickLabels = false
   	export let majorTicks = 10
-  	export let minorTicks = 0
 
 	// Use a unique ID to target the elements Fill Gradient Definition
 	let _id = Math.random()
@@ -29,51 +35,55 @@
 
 	// Array of configuration settigns for each gauge variation
 	let gaugeTypeMap = [];
-	gaugeTypeMap[90] =  { startAngle: -90, endAngle:0, innerRadius: 246, outerRadius:256, innerArcRadius: 88, cornerRadius:10, canvas: { width:256, height: 256 }, pivot: {x: 256, y: 256}, valuePos: {x: 256, y: 256} }
-	gaugeTypeMap[120] = { startAngle: -60, endAngle:60, innerRadius: 118, outerRadius:128, innerArcRadius: 40, cornerRadius:10, canvas: { width:256, height: 128 }, pivot: {x: 128, y: 128}, valuePos: {x: 128, y: 110} }
-	gaugeTypeMap[180] = { startAngle: -90, endAngle:90, innerRadius: 118, outerRadius:128, innerArcRadius: 40, cornerRadius:10, canvas: { width:256, height: 128 }, pivot: {x: 128, y: 128}, valuePos: {x: 128, y: 118} }
-	gaugeTypeMap[240] = { startAngle: -120, endAngle:120, innerRadius: 118, outerRadius:128, innerArcRadius: 40, cornerRadius:10, canvas: { width:256, height: 192 }, pivot: {x: 128, y: 128}, valuePos: {x: 128, y: 118} }
-	gaugeTypeMap[270] = { startAngle: -180, endAngle:90, innerRadius: 118, outerRadius:128, innerArcRadius: 40, cornerRadius:10, canvas: { width:256, height: 256 }, pivot: {x: 128, y: 128}, valuePos: {x: 128, y: 118} }
-	gaugeTypeMap[360] = { startAngle: 0, endAngle:360, innerRadius: 118, outerRadius:128, innerArcRadius: 40, cornerRadius:10, canvas: { width:256, height: 256 }, pivot: {x: 128, y: 128}, valuePos: {x: 128, y: 134} }
+	gaugeTypeMap[90] =  { startAngle: -90, endAngle:0, innerRadius: 226, outerRadius:236, innerArcRadius: 88, cornerRadius:10, canvas: { width:256, height: 256 }, pivot: {x: 236, y: 236}, valuePos: {x: 155, y: 155} }
+	gaugeTypeMap[120] = { startAngle: -60, endAngle:60, innerRadius: 118, outerRadius:128, innerArcRadius: 40, cornerRadius:10, canvas: { width:256, height: 148 }, pivot: {x: 128, y: 128}, valuePos: {x: 128, y: 110} }
+	gaugeTypeMap[180] = { startAngle: -90, endAngle:90, innerRadius: 118, outerRadius:128, innerArcRadius: 40, cornerRadius:10, canvas: { width:256, height: 148 }, pivot: {x: 128, y: 128}, valuePos: {x: 128, y: 118} }
+	gaugeTypeMap[240] = { startAngle: -120, endAngle:120, innerRadius: 118, outerRadius:128, innerArcRadius: 40, cornerRadius:10, canvas: { width:256, height: 192 }, pivot: {x: 128, y: 128}, valuePos: {x: 128, y: 128} }
+	gaugeTypeMap[270] = { startAngle: -180, endAngle:90, innerRadius: 118, outerRadius:128, innerArcRadius: 40, cornerRadius:10, canvas: { width:256, height: 276 }, pivot: {x: 128, y: 128}, valuePos: {x: 128, y: 128} }
+	gaugeTypeMap[360] = { startAngle: 0, endAngle:360, innerRadius: 118, outerRadius:128, innerArcRadius: 40, cornerRadius:10, canvas: { width:256, height: 276 }, pivot: {x: 128, y: 128}, valuePos: {x: 128, y: 128} }
 	
 	let gaugeConfig
-	$: gaugeConfig = gaugeTypeMap[gaugeType];
+	$: gaugeConfig = gaugeTypeMap[arcSize];
 
 	let trackSizeMap =[]
 	trackSizeMap["tiny"] = 4
 	trackSizeMap["small"] = 12
 	trackSizeMap["medium"] = 18
 	trackSizeMap["large"] = 24
+	trackSizeMap["huge"] = 48
 	$: _width = trackSizeMap[trackSize]
 	
 	$: startAngle = gaugeConfig.startAngle;
 	$: endAngle = gaugeConfig.endAngle;
-	$: console.log(Number(trackSizeMap[trackSize]))
-	$: console.log(trackSize)
 	$: innerRadius = gaugeConfig.outerRadius - _width
 	$: outerRadius = gaugeConfig.outerRadius;
 	$: cornerRadius = gaugeConfig.cornerRadius;
 	$: pivot = gaugeConfig.pivot;
 	$: canvas = gaugeConfig.canvas;
-	$: innerArcRadius = gaugeConfig.innerArcRadius;
 	$: valuePos = gaugeConfig.valuePos;
 
 	// An array with the angle and label of each tick
 	let _majorTicks = []
+	let _value = writable(0);
 
-    // $: _value = spring(50, { stiffness: .1 });
 	$: _value.set(value);
-    $: _value = tweened(50, { easing: backInOut, duration: 750 });
+	$: if (animationType === "spring") {
+			_value = spring(50, { stiffness: .1 })
+		} else if (animationType === "tweened") {
+			_value = tweened(50, { easing: backInOut, duration: 750 })
+		}
+
 	$: scale = scaleLinear()
 		.domain([min, max])
 		.range([startAngle, endAngle]);
 	
-	$: generateTicks( majorTicks , minorTicks , gaugeConfig )
+	$: generateTicks( majorTicks , gaugeConfig )
 	
 	$: valueAngle = scale($_value);
 
-	$: fillColor = fillColor ? fillColor : "lime";
-	$: endColor = endColor ? endColor : fillColor;
+	$: trackFillColor = trackFillColor ? trackFillColor : "var(--primaryColor)";	
+		
+	$: _textBaseline = (arcSize == 180) || (arcSize == 120) ? "bottom" : "middle"
 
 	$: arc = d3arc()
 		.innerRadius(innerRadius)
@@ -89,16 +99,8 @@
 		.endAngle(endAngle * Math.PI / 180)
 		.cornerRadius(cornerRadius);
 
-	$: innerArc = d3arc()
-		.innerRadius(0)
-		.outerRadius(innerArcRadius)
-		.startAngle(startAngle * Math.PI / 180)
-		.endAngle(endAngle * Math.PI / 180)
-		.cornerRadius(2);
-
-	function generateTicks ( majorTicks, minorTicks ) {
+	function generateTicks ( majorTicks ) {
 		let _majorStep = ( max - min ) / majorTicks;
-		let _minorStep = _majorStep / minorTicks;
 		let _pos = Number(min) || 0;
 
 		_majorTicks = [];
@@ -106,52 +108,54 @@
 			_majorTicks.push({ angle:scale(Number(_pos)) , label: Math.round(_pos) });
 			_pos += _majorStep;
 		}
+
+		if ( arcSize == 360 ) _majorTicks.shift();
 	}
 
+	// Each SV gradient element has a unique ID so you can show more than
+	// one gauge. We need to set the fill of the valueArc element to this instance
+	// gradient.
 	function setSelfGradient () {
-		console.log(valueArc)
 		let _path = "url(\"#" + _id + "\")"
-		console.log(_path)
 		valueArc.style.fill = _path;
 	}
 
 	onMount ( () => setSelfGradient () )
 </script>
 
-<div class="svg-box" style="--fillColor: {fillColor};">
-
+<div class="svg-box" 
+	style:min-width = {gaugeMinSize}
+	style:--trackColor={ trackColor || "var(--spectrum-global-color-gray-400)" }
+	style:--tickLabelColor={ tickLabelColor || "var(--spectrum-global-color-gray-400)" }
+	style:--valueColor={ valueColor || "var(--spectrum-global-color-gray-700)" }
+	>
 	<svg class="svg-box-content" viewbox="-2, -2, { canvas.width + 4 }, { canvas.height + 4} " version="1.1" xmlns="http://www.w3.org/2000/svg">
 		<path d={trackArc()} class="track" transform="translate({pivot.x}, {pivot.y})" />
 		<path d={arc()} class="valueArc" transform="translate({pivot.x}, {pivot.y})" bind:this={valueArc}/>
-
-		{#if showCenter}
-			<path d={innerArc()} class="innerArc" transform="translate({pivot.x}, {pivot.y})" />
-		{/if}
 
 		{#if showTicks && _majorTicks.length > 0}
 			{#each _majorTicks as tick}
 				<line class="tick" x1={pivot.x} y1={outerRadius - innerRadius} x2={pivot.x} y2={ outerRadius - innerRadius + 12 } transform="rotate({Number(tick.angle)} {pivot.x} {pivot.y})"/>
 				{#if showTickLabels}
-					<text class="tick-label" x={pivot.x} y={outerRadius - innerRadius + 20} transform="rotate({tick.angle} {pivot.x} {pivot.y})"> {tick.label} </text>
+					<text class="tick-label" x={pivot.x} y={outerRadius - innerRadius + 22} transform="rotate({tick.angle} {pivot.x} {pivot.y})"> {tick.label} </text>
 				{/if}
 			{/each}
 		{/if}
 
 		{#if showValue}
-			<text class="value" transform="translate({valuePos.x} {valuePos.y})">
+			<text class="spectrum-Heading spectrum-Heading--size{valueSize}" dominant-baseline={ _textBaseline } transform="translate({valuePos.x} {valuePos.y})">
 				{Math.round($_value)}
 			</text>
 		{/if} 
 
-		{#if showNeedle}
-			<polygon class="needle" 
-				points="{pivot.x}, {_width + 4} {pivot.x + 2},{pivot.y - innerArcRadius - 2} {pivot.x - 2},{pivot.y - innerArcRadius - 2}" transform="rotate({valueAngle} {pivot.x}, {pivot.y})" />
-		{/if}
+		<text class="title"  transform="translate({canvas.width / 2 } {canvas.height})">
+			{title.toUpperCase()}
+		</text>
 
 		<defs>
 		<linearGradient id={_id} x1="0%" y1="0%" x2="100%" y2="0%">
-			<stop offset="0%"   stop-color={fillColor} />
-			<stop offset="100%" stop-color={endColor} />
+			<stop offset="0%"   stop-color={trackFillColor} />
+			<stop offset="100%" stop-color={trackGradientColor || trackFillColor} />
 		</linearGradient>
 	</defs>
 	</svg>
@@ -162,7 +166,7 @@
 <style>
 	.svg-box {
 		width: 100%;
-		min-width: 256px;
+		min-width: 128px;
 		position: relative;
 	}
 
@@ -171,37 +175,31 @@
 		top: 0;
 		left: 0;
 	}
-	.needle {
-		fill: var(--spectrum-global-color-gray-400);
-	}
 
 	.track {
-		stroke: var(--spectrum-global-color-gray-400);
+		stroke: var(--trackColor);
 		stroke-width: 1px;
 		fill: none;
 	}
-
-	.innerArc {
-		stroke: var(--spectrum-global-color-gray-400);
-		stroke-width: 2px;
-		fill: var(--spectrum-global-color-gray-400)
-	}
 	.tick {
-		stroke: var(--spectrum-global-color-gray-400);
+		stroke: var(--trackColor);
 		stroke-width: 1px;
 		fill: none;
 	}
 	.tick-label {
-		fill: var(--spectrum-global-color-gray-600);
+		fill: var(--tickLabelColor);
 		font-weight: 400;
 		font-size: 0.65rem;
 		text-anchor: middle;
 	}
 
-	.value {
-		font-weight: 500;
-		font-size: 0.9rem;
+	.spectrum-Heading {
 		text-anchor: middle;
-		fill: var(--spectrum-global-color-gray-900);
+		fill: var(--valueColor);
+	}
+	.title {
+		text-anchor: middle;
+		font-size: 0.75rem;
+		fill: var(--spectrum-global-color-gray-600);
 	}
 </style>

@@ -1,8 +1,8 @@
-# Bb-component-SuperGauge
-This is a readme for your new Budibase plugin.
 
 # Description
 A Gauge component for Budibase
+
+<img src="assets/preview.gif" alt="Gauge Preview" width="850px"/>
 
 Find out more about [Budibase](https://github.com/Budibase/budibase).
 

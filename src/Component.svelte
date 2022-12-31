@@ -1,21 +1,28 @@
 <script>
-  import Speedometer from "svelte-speedometer"
   import SuperGauge from "./lib/SuperGauge.svelte";
   import { getContext } from "svelte"
 
-  export let gaugeType
+  const { styleable } = getContext("sdk")
+  const component = getContext("component")
+
+  export let title
+  export let arcSize
+  export let gaugeMinSize
   export let trackSize = "medium"
-  export let showCenter
 
   export let min
   export let max
-  export let value
+  export let value = 200
 
-  export let arcSize
-  export let showNeedle
   export let showValue
-  export let fillColor
-  export let endColor
+
+  export let trackColor
+  export let trackFillColor
+  export let trackGradientColor
+  export let tickLabelColor
+  export let valueColor
+  export let valueSize
+  export let animationType
 
   // Properties to set Major and Minor Ticks
   export let showTicks
@@ -23,27 +30,31 @@
   export let majorTicks 
   export let minorTicks
 
-  const { styleable } = getContext("sdk")
-  const component = getContext("component")
+  $: _value = Number(value) || 0;
+
+  $: minorTicks = (minorTicks > 0) ? minorTicks : 1;
+  $: majorTicks = (majorTicks > 0) ? majorTicks : 1;
 </script>
 
 <div use:styleable={$component.styles}>
-
       <SuperGauge 
-        {fillColor}
-        {endColor}
+        {title}
+        {gaugeMinSize}
         {trackSize} 
-        {showCenter}
         {min}
         {max}
-        {value} 
-        {showNeedle} 
+        value={_value}
         {showValue}
         {showTicks}
         {showTickLabels}
         {majorTicks}
-        {minorTicks}
-        gaugeType={arcSize}
-      />
-
+        {valueSize}
+        {arcSize}
+        {trackColor}
+        {trackFillColor}
+        {trackGradientColor}
+        {tickLabelColor}
+        {valueColor}
+        {animationType}
+      />     
 </div>
