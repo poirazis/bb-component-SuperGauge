@@ -13,6 +13,7 @@
   export let min
   export let max
   export let value = 200
+  export let precision
 
   export let showValue
 
@@ -44,6 +45,7 @@
         {min}
         {max}
         value={_value}
+        {precision}
         {showValue}
         {showTicks}
         {showTickLabels}

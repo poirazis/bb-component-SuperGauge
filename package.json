@@ -1,6 +1,6 @@
 {
   "name": "bb-component-SuperGauge",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A Gauge component for Budibase",
   "license": "MIT",
   "svelte": "index.js",

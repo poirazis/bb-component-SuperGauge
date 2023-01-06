@@ -42,13 +42,13 @@
         "defaultValue": "256px"
       },
       {
-        "type": "number",
+        "type": "text",
         "key": "min",
         "label": "Minimum",
         "defaultValue": 0
       },
       {
-        "type": "number",
+        "type": "text",
         "key": "max",
         "label": "Maximum",
         "defaultValue": 1000
@@ -58,6 +58,14 @@
         "key": "value",
         "label": "Value",
         "defaultValue": 800
+      },
+      {
+        "type": "number",
+        "key": "precision",
+        "label": "Decimal Precision",
+        "min": 0,
+        "max": 4,
+        "defaultValue": 2
       },
       {
         "type": "boolean",

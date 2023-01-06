@@ -14,6 +14,7 @@
 	export let min = 0
 	export let max = 1000
 	export let value = 350
+	export let precision
 
 	export let showValue = true
 
@@ -77,7 +78,7 @@
 		.domain([min, max])
 		.range([startAngle, endAngle]);
 	
-	$: generateTicks( majorTicks , gaugeConfig )
+	$: precision, generateTicks( majorTicks , gaugeConfig )
 	
 	$: valueAngle = scale($_value);
 
@@ -105,7 +106,7 @@
 
 		_majorTicks = [];
 		while ( _pos <= max ) {
-			_majorTicks.push({ angle:scale(Number(_pos)) , label: Math.round(_pos) });
+			_majorTicks.push({ angle:scale(Number(_pos)) , label: _pos.toFixed(precision) });
 			_pos += _majorStep;
 		}
 
@@ -144,7 +145,7 @@
 
 		{#if showValue}
 			<text class="spectrum-Heading spectrum-Heading--size{valueSize}" dominant-baseline={ _textBaseline } transform="translate({valuePos.x} {valuePos.y})">
-				{Math.round($_value)}
+				{$_value.toFixed(precision)}
 			</text>
 		{/if} 
 
