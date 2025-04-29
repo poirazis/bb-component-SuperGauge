@@ -6,25 +6,31 @@ on:
       - master
       - main
 
+permissions:
+  contents: write # Required for creating releases
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 16
-      - name: Make the production plugin bundle
+          node-version: 20
+          cache: "yarn"
+      - name: Install dependencies
+        run: yarn install
+      - name: Build the production bundle
         run: |
           release_version=$(cat package.json | jq -r '.version')
           echo "RELEASE_VERSION=$release_version" >> $GITHUB_ENV
-          yarn
           yarn build
-      - name: Perform Github Release
-        uses: softprops/action-gh-release@v1
+      - name: Verify build output
+        run: ls -la dist/
+      - name: Perform GitHub Release
+        uses: softprops/action-gh-release@v2
         with:
           name: v${{ env.RELEASE_VERSION }}
           tag_name: v${{ env.RELEASE_VERSION }}
           generate_release_notes: true
-          files: |
-            dist/*.tar.gz
+          files: dist/*.tar.gz
