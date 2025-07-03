@@ -3,7 +3,7 @@
   "metadata": {},
   "schema": {
     "name": "bb-component-SuperGauge",
-    "friendlyName": "Super Gauge",
+    "friendlyName": "Super Charts - Gauge",
     "description": "A Gauge component for Budibase",
     "icon": "GraphDonut",
     "styles": ["size", "border", "padding"],
